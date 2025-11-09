@@ -1,4 +1,5 @@
-﻿using Duckov.MiniMaps;
+﻿using Duckov;
+using Duckov.MiniMaps;
 using Duckov.Scenes;
 using System;
 using System.Collections.Generic;
@@ -79,9 +80,8 @@ namespace Airborne
         public static bool TryGenerateFlightPath(Transform player, out (Vector3 startPos, Vector3 endPos) result) 
         {
            
-            float flightHeight = 50f; // 飞行高度
+            float flightHeight = 25f; // 飞行高度
             result = (Vector3.zero, Vector3.zero);
-
             Vector3 startPos = player.transform.position;
             startPos.y = flightHeight;
             

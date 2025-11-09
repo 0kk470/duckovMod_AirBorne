@@ -23,7 +23,7 @@ namespace Airborne
         private Transform m_PlayerPrevParent;
 
         [SerializeField]
-        private float m_FlySpeed = 5f;
+        private float m_FlySpeed = 10f;
 
         void Awake()
         {
@@ -68,9 +68,27 @@ namespace Airborne
                 return;
             m_LocalPlayer.transform.SetParent(m_PlayerPrevParent);
             m_LocalPlayer.gameObject.SetActive(true);
+            TakeParachute();
             m_isPlayerLeaved = true;
             Destroy(gameObject, 1f);
         }
+
+        void TakeParachute()
+        {
+            if (m_LocalPlayer == null)
+                return;
+            var parachuteGo = AssetManager.Instance.CreateFromPath("Assets/Airborne/Parachute.prefab");
+            if (parachuteGo == null)
+                return;
+            parachuteGo.AddComponent<ModAudio>();
+            parachuteGo.transform.position = m_LocalPlayer.transform.position;
+            var parachute = parachuteGo.AddComponent<Parachute>();
+            if (parachute != null)
+            {
+                parachute.BindCharacter(m_LocalPlayer);
+            }
+        }
+
 
         bool IsReachEnd()
         {
@@ -84,10 +102,7 @@ namespace Airborne
                 return;
             if (m_isPlayerLeaved)
                 return;
-            if(context.started)
-            {
-                PlayerJumpOut();
-            }
+            PlayerJumpOut();
         }
 
 
@@ -97,6 +112,7 @@ namespace Airborne
             m_StartPoint = startPos;
             m_EndPoint = endPos;
             transform.position = startPos;
+
             transform.LookAt(endPos, Vector3.up);
             m_LocalPlayer = player;
             m_LocalPlayer.gameObject.SetActive(false);

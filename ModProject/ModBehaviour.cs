@@ -58,6 +58,9 @@ namespace Airborne
             }
 
             AirPlane airPlane = go.AddComponent<AirPlane>();
+            go.AddComponent<AudioListener>();
+            var audio = go.AddComponent<ModAudio>();
+            audio.Play();
             SceneManager.MoveGameObjectToScene(go, player.gameObject.scene);
             airPlane.BeginFly(path.startPos, path.endPos, player);
         }
