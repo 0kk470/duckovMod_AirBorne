@@ -8,11 +8,7 @@ namespace Airborne
 
         void Update()
         {
-            var assetPaths = Airborne.AssetManager.Instance.GetAssetPathsInBundle("airborne");
-            foreach(var assetPath in assetPaths)
-            {
-                Debug.Log(assetPath);
-            }
+
         }
     }
 }

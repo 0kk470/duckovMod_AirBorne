@@ -1,6 +1,7 @@
 ﻿
 using Duckov.Scenes;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Airborne
 {
@@ -43,6 +44,12 @@ namespace Airborne
                 return;
             }
 
+            if (!MapHelper.TryGenerateFlightPath(player.transform, out var path))
+            {
+                Debug.LogError("Airborne Mod: Failed to generate flight path!");
+                return;
+            }
+
             var go = AssetManager.Instance.CreateFromPath("Assets/Airborne/Jet.prefab");
             if (go == null)
             {
@@ -50,10 +57,8 @@ namespace Airborne
                 return;
             }
 
-
-
             AirPlane airPlane = go.AddComponent<AirPlane>();
-            var path = MapHelper.GenerateFlightPath();
+            SceneManager.MoveGameObjectToScene(go, player.gameObject.scene);
             airPlane.BeginFly(path.startPos, path.endPos, player);
         }
     }

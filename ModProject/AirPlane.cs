@@ -22,6 +22,9 @@ namespace Airborne
 
         private Transform m_PlayerPrevParent;
 
+        [SerializeField]
+        private float m_FlySpeed = 5f;
+
         void Awake()
         {
             m_DashAction = GameManager.MainPlayerInput.actions["Dash"];
@@ -46,9 +49,10 @@ namespace Airborne
             if (!m_IsEnabled)
                 return;
 
-            transform.position += transform.forward * Time.deltaTime * 10f;
+            var dir = (m_EndPoint - m_StartPoint).normalized;
+            transform.position += dir * Time.deltaTime * m_FlySpeed;
 
-            if(IsReachEnd())
+            if (IsReachEnd())
             {
                 m_IsEnabled = false;
                 PlayerJumpOut();
@@ -64,6 +68,8 @@ namespace Airborne
                 return;
             m_LocalPlayer.transform.SetParent(m_PlayerPrevParent);
             m_LocalPlayer.gameObject.SetActive(true);
+            m_isPlayerLeaved = true;
+            Destroy(gameObject, 1f);
         }
 
         bool IsReachEnd()
@@ -82,21 +88,23 @@ namespace Airborne
             {
                 PlayerJumpOut();
             }
-
-
         }
 
 
         public void BeginFly(Vector3 startPos, Vector3 endPos, CharacterMainControl player)
         {
+            // 先设置飞机位置
+            m_StartPoint = startPos;
+            m_EndPoint = endPos;
+            transform.position = startPos;
+            transform.LookAt(endPos, Vector3.up);
             m_LocalPlayer = player;
             m_LocalPlayer.gameObject.SetActive(false);
             m_PlayerPrevParent = m_LocalPlayer.transform.parent;
-            m_LocalPlayer.transform.SetParent(transform, false);
+            m_LocalPlayer.transform.SetParent(transform);
+            m_LocalPlayer.transform.localPosition = Vector3.zero;
             m_IsEnabled = true;
-            transform.position = startPos;
-            m_StartPoint = startPos;
-            m_EndPoint = endPos;
+
         }
     }
 }

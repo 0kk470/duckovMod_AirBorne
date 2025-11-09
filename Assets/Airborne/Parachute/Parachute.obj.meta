@@ -3,7 +3,12 @@ guid: 198074fdb5fbac746931d9729e27a88c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn1SG
+    second: {fileID: 2100000, guid: e25c202e47e5901448d892d109e7d4b8, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -105,5 +110,5 @@ ModelImporter:
   remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: 
-  assetBundleName: 
+  assetBundleName: airborne
   assetBundleVariant: 

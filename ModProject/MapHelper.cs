@@ -19,16 +19,7 @@ namespace Airborne
                 Vector3 mapCenter = miniMapSettings.combinedCenter;
                 return new Vector3(mapSize, 0, mapSize);
             }
-
-            var miniMapCenter = GameObject.FindObjectOfType<MiniMapCenter>();
-            if (miniMapCenter != null && miniMapCenter.WorldSize > 0)
-            {
-                float worldSize = miniMapCenter.WorldSize;
-                return new Vector3(worldSize, 0, worldSize);
-            }
-
-            // 默认值
-            return new Vector3(1000, 0, 1000);
+            return new Vector3(250, 0, 250);
         }
 
         public static Vector3 GetMapCenter()
@@ -42,47 +33,73 @@ namespace Airborne
             return instance.combinedCenter;
         }
 
-        // 生成飞机路径
-        public static (Vector3 startPos, Vector3 endPos) GenerateFlightPath()
+        public static float GetMapSize()
         {
-            Vector3 mapBounds = GetMapBounds();
-            Vector3 mapCenter = GetMapCenter();
-
-            // 在地图边界外生成起始点和结束点
-            float margin = 200f; // 边界外的距离
-            float flightHeight = 500f; // 飞行高度
-
-            // 随机选择飞行方向
-            float angle = UnityEngine.Random.Range(0f, 360f) * Mathf.Deg2Rad;
-            Vector3 direction = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
-
-            // 计算起始点和结束点
-            float halfSize = Mathf.Max(mapBounds.x, mapBounds.z) * 0.5f;
-            Vector3 startPos = mapCenter - direction * (halfSize + margin);
-            Vector3 endPos = mapCenter + direction * (halfSize + margin);
-
-            // 设置高度
-            startPos.y = flightHeight;
-            endPos.y = flightHeight;
-
-            return (startPos, endPos);
+            MiniMapSettings instance = MiniMapSettings.Instance;
+            return instance.combinedSize;
         }
 
-        // 适合跳伞的室外地图列表
-        private static readonly string[] PARACHUTE_COMPATIBLE_MAPS = new string[]
+        public static CountDownArea[] GetExitPoints()
         {
-            "Level_GroundZero_Main",      //零号区
-            "Level_HiddenWarehouse_Main", //仓库
-            "Level_Farm_Main",            //农场
-            "Level_StormZone_Main"        //风暴区
-        };
+            Debug.Log("=== 正在获取撤离点位置 ===");
+
+            // 查找场景中所有的CountDownArea组件
+            var exitPoints = GameObject.FindObjectsOfType<CountDownArea>();
+
+            return exitPoints;
+        }
+
+        public static bool TryGetFurthestExitPoint(Vector3 fromPosition, out Vector3 exitPosition)
+        {
+            var exitPoints = GetExitPoints();
+            if (exitPoints == null || exitPoints.Length == 0)
+            {
+                exitPosition = Vector3.zero;
+                return false;
+            }
+
+            float maxDistance = -1f;
+            Vector3 furthestPoint = Vector3.zero;
+            foreach (var exitPoint in exitPoints)
+            {
+                float distance = Vector3.Distance(fromPosition, exitPoint.transform.position);
+                if (distance > maxDistance)
+                {
+                    maxDistance = distance;
+                    furthestPoint = exitPoint.transform.position;
+                }
+            }
+            exitPosition = furthestPoint;
+            return true;
+        }
+
+
+
+        // 生成飞机路径
+        public static bool TryGenerateFlightPath(Transform player, out (Vector3 startPos, Vector3 endPos) result) 
+        {
+           
+            float flightHeight = 50f; // 飞行高度
+            result = (Vector3.zero, Vector3.zero);
+
+            Vector3 startPos = player.transform.position;
+            startPos.y = flightHeight;
+            
+            if(TryGetFurthestExitPoint(startPos, out var endPos))
+            {
+                endPos.y = flightHeight;
+                result = (startPos, endPos);
+                return true;
+            }
+
+            return false;
+        }
 
         // 需要排除的室内地图
         private static readonly string[] INDOOR_MAPS = new string[]
         {
             "Base",                         // 玩家基地
             "Level_JLab_Main",              // 实验室
-
         };
 
         public static bool IsParachuteCompatible(string sceneID)
@@ -102,7 +119,7 @@ namespace Airborne
                 return false;
             }
 
-            return PARACHUTE_COMPATIBLE_MAPS.Contains(sceneID);
+            return true;
         }
     }
 }
