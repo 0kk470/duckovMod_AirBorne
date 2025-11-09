@@ -1,4 +1,5 @@
 ﻿
+using Duckov;
 using Duckov.Scenes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -58,9 +59,7 @@ namespace Airborne
             }
 
             AirPlane airPlane = go.AddComponent<AirPlane>();
-            go.AddComponent<AudioListener>();
-            var audio = go.AddComponent<ModAudio>();
-            audio.Play();
+            AudioHelper.PlaySFX("airplane-fly.wav", go, true);
             SceneManager.MoveGameObjectToScene(go, player.gameObject.scene);
             airPlane.BeginFly(path.startPos, path.endPos, player);
         }

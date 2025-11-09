@@ -10,7 +10,7 @@ namespace Airborne
         private CharacterMovement m_Movement;
 
         [SerializeField]
-        private float m_DropSpeed = 5f;
+        private float m_DropSpeed = -5f;
 
         private bool m_IsLanded = false;
 
@@ -19,17 +19,18 @@ namespace Airborne
             m_IsLanded = false;
             m_Character = character;
             m_Movement = character.GetComponentInChildren<CharacterMovement>();
+            transform.SetParent(m_Character.characterModel.transform);
+            transform.localPosition = Vector3.up * 0.1f;
         }
+
 
         void Update()
         {
             if (m_Character == null)
                 return;
-            transform.position = m_Character.transform.position;
-
             if(m_Movement != null)
                 m_Movement.velocity.y = m_DropSpeed;
-            if (!m_Character.IsOnGround && !m_IsLanded)
+            if (m_Character.IsOnGround && !m_IsLanded)
             {
                 m_IsLanded = true;
                 Destroy(this.gameObject, 0.2f);

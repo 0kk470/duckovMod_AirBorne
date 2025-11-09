@@ -1,4 +1,5 @@
-﻿using Duckov.Utilities;
+﻿using Duckov;
+using Duckov.Utilities;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -77,14 +78,13 @@ namespace Airborne
         {
             if (m_LocalPlayer == null)
                 return;
-            var parachuteGo = AssetManager.Instance.CreateFromPath("Assets/Airborne/Parachute.prefab");
+            var parachuteGo =  Airborne.AssetManager.Instance.CreateFromPath("Assets/Airborne/Parachute.prefab");
             if (parachuteGo == null)
                 return;
-            parachuteGo.AddComponent<ModAudio>();
-            parachuteGo.transform.position = m_LocalPlayer.transform.position;
             var parachute = parachuteGo.AddComponent<Parachute>();
             if (parachute != null)
             {
+                AudioHelper.PlaySFX("umbrella-open.mp3", parachuteGo);
                 parachute.BindCharacter(m_LocalPlayer);
             }
         }
