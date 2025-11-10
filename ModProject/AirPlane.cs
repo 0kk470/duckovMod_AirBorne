@@ -120,7 +120,6 @@ namespace Airborne
             m_LocalPlayer.transform.SetParent(transform);
             m_LocalPlayer.transform.localPosition = Vector3.zero;
             m_IsEnabled = true;
-
         }
     }
 }

@@ -4,40 +4,21 @@ using Duckov.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
 namespace Airborne
 {
-    internal class MapHelper
+    internal static class MapHelper
     {
-        public static Vector3 GetMapBounds()
+        public static Color ToColor(this string hex)
         {
-            var miniMapSettings = MiniMapSettings.Instance;
-            if (miniMapSettings != null)
+            if (ColorUtility.TryParseHtmlString(hex, out var color))
             {
-                float mapSize = miniMapSettings.combinedSize;
-                Vector3 mapCenter = miniMapSettings.combinedCenter;
-                return new Vector3(mapSize, 0, mapSize);
+                return color;
             }
-            return new Vector3(250, 0, 250);
-        }
-
-        public static Vector3 GetMapCenter()
-        {
-            MiniMapSettings instance = MiniMapSettings.Instance;
-            if (instance == null)
-            {
-                return Vector3.zero;
-            }
-
-            return instance.combinedCenter;
-        }
-
-        public static float GetMapSize()
-        {
-            MiniMapSettings instance = MiniMapSettings.Instance;
-            return instance.combinedSize;
+            return Color.white;
         }
 
         public static CountDownArea[] GetExitPoints()

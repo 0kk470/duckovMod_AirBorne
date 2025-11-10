@@ -1,5 +1,6 @@
 ﻿
 using Duckov;
+using Duckov.MiniMaps;
 using Duckov.Scenes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -61,7 +62,21 @@ namespace Airborne
             AirPlane airPlane = go.AddComponent<AirPlane>();
             AudioHelper.PlaySFX("airplane-fly.wav", go, true);
             SceneManager.MoveGameObjectToScene(go, player.gameObject.scene);
+            CreateAirplaneIcon(airPlane);
             airPlane.BeginFly(path.startPos, path.endPos, player);
+        }
+
+        private void CreateAirplaneIcon(AirPlane plane)
+        {
+            if (MultiSceneCore.Instance != null)
+            {
+                var sprite = AssetManager.Instance.LoadAsset<Sprite>("Assets/Airborne/MapIcon_Airplane.png");
+                var simplePointOfInterest = plane.gameObject.AddComponent<SimplePointOfInterest>();
+                simplePointOfInterest.Color = Color.white;
+                simplePointOfInterest.ShadowColor = Color.white;
+                simplePointOfInterest.ShadowDistance = 0;
+                simplePointOfInterest.Setup(sprite, "Airplane", followActiveScene: true);
+            }
         }
     }
 }
